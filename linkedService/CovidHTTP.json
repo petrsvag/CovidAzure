@@ -1,0 +1,12 @@
+{
+	"name": "CovidHTTP",
+	"properties": {
+		"annotations": [],
+		"type": "HttpServer",
+		"typeProperties": {
+			"url": "https://onemocneni-aktualne.mzcr.cz",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}
