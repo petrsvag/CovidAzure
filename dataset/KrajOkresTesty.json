@@ -17,11 +17,6 @@
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
-		"schema": [
-			{
-				"name": "{",
-				"type": "String"
-			}
-		]
+		"schema": []
 	}
 }
