@@ -1,5 +1,5 @@
 {
-	"name": "Kraj",
+	"name": "KrajOkresTesty",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "CovidHTTP",
