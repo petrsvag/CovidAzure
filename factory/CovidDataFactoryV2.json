@@ -1,0 +1,9 @@
+{
+	"name": "CovidDataFactoryV2",
+	"location": "westeurope",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "869b8546-91c6-40bb-a116-0df590e3aee4",
+		"tenantId": "f345c406-5268-43b0-b19f-5862fa6833f8"
+	}
+}
