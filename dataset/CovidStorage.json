@@ -15,7 +15,10 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "@dataset().filename",
+				"fileName": {
+					"value": "@dataset().filename",
+					"type": "Expression"
+				},
 				"folderPath": "downloads",
 				"container": "cumulative-tests"
 			},
@@ -24,6 +27,55 @@
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
-		"schema": []
+		"schema": [
+			{
+				"name": "id",
+				"type": "String"
+			},
+			{
+				"name": "datum",
+				"type": "String"
+			},
+			{
+				"name": "kraj_nuts_kod",
+				"type": "String"
+			},
+			{
+				"name": "okres_lau_kod",
+				"type": "String"
+			},
+			{
+				"name": "prirustkovy_pocet_testu_okres",
+				"type": "String"
+			},
+			{
+				"name": "kumulativni_pocet_testu_okres",
+				"type": "String"
+			},
+			{
+				"name": "prirustkovy_pocet_testu_kraj",
+				"type": "String"
+			},
+			{
+				"name": "kumulativni_pocet_testu_kraj",
+				"type": "String"
+			},
+			{
+				"name": "prirustkovy_pocet_prvnich_testu_okres",
+				"type": "String"
+			},
+			{
+				"name": "kumulativni_pocet_prvnich_testu_okres",
+				"type": "String"
+			},
+			{
+				"name": "prirustkovy_pocet_prvnich_testu_kraj",
+				"type": "String"
+			},
+			{
+				"name": "kumulativni_pocet_prvnich_testu_kraj",
+				"type": "String"
+			}
+		]
 	}
 }
