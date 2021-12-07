@@ -1,0 +1,30 @@
+{
+	"name": "Excel_NUTS_CODES",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageCovidKraj",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "CZ NUTS CODES",
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "CZ AREA CODES.xlsx",
+				"container": "static-data"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "nazev_kraje",
+				"type": "String"
+			},
+			{
+				"name": "CZ-NUTS3",
+				"type": "String"
+			}
+		]
+	}
+}

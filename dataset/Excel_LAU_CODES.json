@@ -1,0 +1,38 @@
+{
+	"name": "Excel_LAU_CODES",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageCovidKraj",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "CZ LAU CODES",
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "CZ AREA CODES.xlsx",
+				"container": "static-data"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "kod_okresu",
+				"type": "String"
+			},
+			{
+				"name": "nazev_okresu",
+				"type": "String"
+			},
+			{
+				"name": "CZ-NUTS4",
+				"type": "String"
+			},
+			{
+				"name": "nazev_kraje",
+				"type": "String"
+			}
+		]
+	}
+}
