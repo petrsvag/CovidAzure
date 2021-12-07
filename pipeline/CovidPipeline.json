@@ -91,13 +91,13 @@
 						"datasetParameters": {
 							"Downloaded": {
 								"filename": {
-									"value": ". @concat('covid_cumulative_tests',replace(pipeline().TriggerTime,':','-'))",
+									"value": "@concat('covid_cumulative_tests',replace(pipeline().TriggerTime,':','-'))",
 									"type": "Expression"
 								}
 							},
 							"Save": {
 								"directory_name": {
-									"value": ". @concat('covid_dataflow_',replace(pipeline().TriggerTime,':','-'))",
+									"value": "@concat('covid_dataflow_',replace(pipeline().TriggerTime,':','-'))",
 									"type": "Expression"
 								}
 							}
