@@ -66,9 +66,16 @@
 				]
 			},
 			{
-				"name": "Data flow1",
+				"name": "CovidFLow",
 				"type": "ExecuteDataFlow",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "CovidCopy",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "1.00:00:00",
 					"retry": 0,
@@ -80,7 +87,21 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "Covid_LUA_NUTS_DataFlow",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"Downloaded": {
+								"filename": {
+									"value": ". @concat('covid_cumulative_tests',replace(pipeline().TriggerTime,':','-'))",
+									"type": "Expression"
+								}
+							},
+							"Save": {
+								"directory_name": {
+									"value": ". @concat('covid_dataflow_',replace(pipeline().TriggerTime,':','-'))",
+									"type": "Expression"
+								}
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
