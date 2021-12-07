@@ -5,11 +5,19 @@
 			"referenceName": "AzureBlobStorageCovidKraj",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"filename": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
-				"type": "AzureBlobStorageLocation"
+				"type": "AzureBlobStorageLocation",
+				"fileName": "@dataset().filename",
+				"folderPath": "downloads",
+				"container": "cumulative-tests"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",

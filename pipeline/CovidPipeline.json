@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
+				"name": "CovidCopy",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -55,7 +55,13 @@
 				"outputs": [
 					{
 						"referenceName": "CovidStorage",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"filename": {
+								"value": "@concat('covid_cumulative_tests',replace(pipeline().TriggerTime,':','-'))",
+								"type": "Expression"
+							}
+						}
 					}
 				]
 			},
@@ -64,7 +70,7 @@
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "Copy data1",
+						"activity": "CovidCopy",
 						"dependencyConditions": [
 							"Succeeded"
 						]
