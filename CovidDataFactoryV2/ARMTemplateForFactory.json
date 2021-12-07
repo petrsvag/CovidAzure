@@ -119,13 +119,13 @@
 									"NUTS": {},
 									"Downloaded": {
 										"filename": {
-											"value": ". @concat('covid_cumulative_tests',replace(pipeline().TriggerTime,':','-'))",
+											"value": "@concat('covid_cumulative_tests',replace(pipeline().TriggerTime,':','-'))",
 											"type": "Expression"
 										}
 									},
 									"Save": {
 										"directory_name": {
-											"value": ". @concat('covid_dataflow_',replace(pipeline().TriggerTime,':','-'))",
+											"value": "@concat('covid_dataflow_',replace(pipeline().TriggerTime,':','-'))",
 											"type": "Expression"
 										}
 									}
@@ -233,6 +233,41 @@
 						"type": "String"
 					}
 				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageCovidKraj')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DatasetAfterFlow')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageCovidKraj",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"directory_name": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": {
+							"value": "@dataset().directory_name",
+							"type": "Expression"
+						},
+						"container": "cumulative-tests"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageCovidKraj')]"
@@ -429,38 +464,6 @@
 				"[concat(variables('factoryId'), '/datasets/Excel_NUTS_CODES')]",
 				"[concat(variables('factoryId'), '/datasets/CovidStorage')]",
 				"[concat(variables('factoryId'), '/datasets/DatasetAfterFlow')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DatasetAfterFlow')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorageCovidKraj",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"directory_name": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"folderPath": "@dataset().directory_name",
-						"container": "cumulative-tests"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageCovidKraj')]"
 			]
 		}
 	]
