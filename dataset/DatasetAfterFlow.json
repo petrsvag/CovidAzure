@@ -1,0 +1,27 @@
+{
+	"name": "DatasetAfterFlow",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageCovidKraj",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"directory_name": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": "@dataset().directory_name",
+				"container": "cumulative-tests"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
