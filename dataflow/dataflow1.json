@@ -1,0 +1,44 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Excel_LAU_CODES",
+						"type": "DatasetReference"
+					},
+					"name": "LAU"
+				},
+				{
+					"dataset": {
+						"referenceName": "Excel_NUTS_CODES",
+						"type": "DatasetReference"
+					},
+					"name": "NUTS"
+				},
+				{
+					"dataset": {
+						"referenceName": "CovidStorage",
+						"type": "DatasetReference"
+					},
+					"name": "Downloaded"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "JoinLAU"
+				},
+				{
+					"name": "JoinNUTS"
+				},
+				{
+					"name": "Select1"
+				}
+			],
+			"script": "source(output(\n\t\tkod_okresu as string,\n\t\tnazev_okresu as string,\n\t\t{CZ-NUTS4} as string,\n\t\tnazev_kraje as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> LAU\nsource(output(\n\t\tnazev_kraje as string,\n\t\t{CZ-NUTS3} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> NUTS\nsource(output(\n\t\tid as string,\n\t\tdatum as string,\n\t\tkraj_nuts_kod as string,\n\t\tokres_lau_kod as string,\n\t\tprirustkovy_pocet_testu_okres as string,\n\t\tkumulativni_pocet_testu_okres as string,\n\t\tprirustkovy_pocet_testu_kraj as string,\n\t\tkumulativni_pocet_testu_kraj as string,\n\t\tprirustkovy_pocet_prvnich_testu_okres as string,\n\t\tkumulativni_pocet_prvnich_testu_okres as string,\n\t\tprirustkovy_pocet_prvnich_testu_kraj as string,\n\t\tkumulativni_pocet_prvnich_testu_kraj as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Downloaded\nDownloaded, LAU join(okres_lau_kod == {CZ-NUTS4},\n\tjoinType:'left',\n\tbroadcast: 'auto')~> JoinLAU\nJoinLAU, NUTS join(kraj_nuts_kod == {CZ-NUTS3},\n\tjoinType:'left',\n\tbroadcast: 'auto')~> JoinNUTS\nJoinNUTS select(mapColumn(\n\t\tid,\n\t\tdatum,\n\t\tkraj_nuts_kod,\n\t\tokres_lau_kod,\n\t\tprirustkovy_pocet_testu_okres,\n\t\tkumulativni_pocet_testu_okres,\n\t\tprirustkovy_pocet_testu_kraj,\n\t\tkumulativni_pocet_testu_kraj,\n\t\tprirustkovy_pocet_prvnich_testu_okres,\n\t\tkumulativni_pocet_prvnich_testu_okres,\n\t\tprirustkovy_pocet_prvnich_testu_kraj,\n\t\tkumulativni_pocet_prvnich_testu_kraj,\n\t\tkod_okresu,\n\t\tnazev_okresu,\n\t\t{CZ-NUTS4},\n\t\tnazev_kraje = LAU@nazev_kraje,\n\t\tnazev_kraje = NUTS@nazev_kraje,\n\t\t{CZ-NUTS3}\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1"
+		}
+	}
+}
