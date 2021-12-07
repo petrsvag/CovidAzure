@@ -89,6 +89,55 @@
 								}
 							}
 						]
+					},
+					{
+						"name": "CovidFLow",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "CovidCopy",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Covid_LUA_NUTS_DataFlow",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"LAU": {},
+									"NUTS": {},
+									"Downloaded": {
+										"filename": {
+											"value": ". @concat('covid_cumulative_tests',replace(pipeline().TriggerTime,':','-'))",
+											"type": "Expression"
+										}
+									},
+									"Save": {
+										"directory_name": {
+											"value": ". @concat('covid_dataflow_',replace(pipeline().TriggerTime,':','-'))",
+											"type": "Expression"
+										}
+									}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
 					}
 				],
 				"policy": {
@@ -99,7 +148,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/KrajOkresTesty')]",
-				"[concat(variables('factoryId'), '/datasets/CovidStorage')]"
+				"[concat(variables('factoryId'), '/datasets/CovidStorage')]",
+				"[concat(variables('factoryId'), '/dataflows/Covid_LUA_NUTS_DataFlow')]"
 			]
 		},
 		{
@@ -121,7 +171,10 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "@dataset().filename",
+						"fileName": {
+							"value": "@dataset().filename",
+							"type": "Expression"
+						},
 						"folderPath": "downloads",
 						"container": "cumulative-tests"
 					},
@@ -130,66 +183,60 @@
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
-				"schema": []
+				"schema": [
+					{
+						"name": "id",
+						"type": "String"
+					},
+					{
+						"name": "datum",
+						"type": "String"
+					},
+					{
+						"name": "kraj_nuts_kod",
+						"type": "String"
+					},
+					{
+						"name": "okres_lau_kod",
+						"type": "String"
+					},
+					{
+						"name": "prirustkovy_pocet_testu_okres",
+						"type": "String"
+					},
+					{
+						"name": "kumulativni_pocet_testu_okres",
+						"type": "String"
+					},
+					{
+						"name": "prirustkovy_pocet_testu_kraj",
+						"type": "String"
+					},
+					{
+						"name": "kumulativni_pocet_testu_kraj",
+						"type": "String"
+					},
+					{
+						"name": "prirustkovy_pocet_prvnich_testu_okres",
+						"type": "String"
+					},
+					{
+						"name": "kumulativni_pocet_prvnich_testu_okres",
+						"type": "String"
+					},
+					{
+						"name": "prirustkovy_pocet_prvnich_testu_kraj",
+						"type": "String"
+					},
+					{
+						"name": "kumulativni_pocet_prvnich_testu_kraj",
+						"type": "String"
+					}
+				]
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageCovidKraj')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/KrajOkresTesty')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "CovidHTTP",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "HttpServerLocation",
-						"relativeUrl": "/api/v2/covid-19/kraj-okres-testy.csv"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/CovidHTTP')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureBlobStorageCovidKraj')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('AzureBlobStorageCovidKraj_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CovidHTTP')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "HttpServer",
-				"typeProperties": {
-					"url": "[parameters('CovidHTTP_properties_typeProperties_url')]",
-					"enableServerCertificateValidation": true,
-					"authenticationType": "Anonymous"
-				}
-			},
-			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Excel_LAU_CODES')]",
@@ -264,6 +311,153 @@
 						"type": "String"
 					}
 				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageCovidKraj')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/KrajOkresTesty')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CovidHTTP",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/api/v2/covid-19/kraj-okres-testy.csv"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CovidHTTP')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureBlobStorageCovidKraj')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureBlobStorageCovidKraj_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CovidHTTP')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('CovidHTTP_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Covid_LUA_NUTS_DataFlow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Excel_LAU_CODES",
+								"type": "DatasetReference"
+							},
+							"name": "LAU"
+						},
+						{
+							"dataset": {
+								"referenceName": "Excel_NUTS_CODES",
+								"type": "DatasetReference"
+							},
+							"name": "NUTS"
+						},
+						{
+							"dataset": {
+								"referenceName": "CovidStorage",
+								"type": "DatasetReference"
+							},
+							"name": "Downloaded"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DatasetAfterFlow",
+								"type": "DatasetReference"
+							},
+							"name": "Save"
+						}
+					],
+					"transformations": [
+						{
+							"name": "JoinLAU"
+						},
+						{
+							"name": "JoinNUTS"
+						},
+						{
+							"name": "Select1"
+						}
+					],
+					"script": "source(output(\n\t\tkod_okresu as string,\n\t\tnazev_okresu as string,\n\t\t{CZ-NUTS4} as string,\n\t\tnazev_kraje as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> LAU\nsource(output(\n\t\tnazev_kraje as string,\n\t\t{CZ-NUTS3} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> NUTS\nsource(output(\n\t\tid as string,\n\t\tdatum as string,\n\t\tkraj_nuts_kod as string,\n\t\tokres_lau_kod as string,\n\t\tprirustkovy_pocet_testu_okres as string,\n\t\tkumulativni_pocet_testu_okres as string,\n\t\tprirustkovy_pocet_testu_kraj as string,\n\t\tkumulativni_pocet_testu_kraj as string,\n\t\tprirustkovy_pocet_prvnich_testu_okres as string,\n\t\tkumulativni_pocet_prvnich_testu_okres as string,\n\t\tprirustkovy_pocet_prvnich_testu_kraj as string,\n\t\tkumulativni_pocet_prvnich_testu_kraj as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Downloaded\nDownloaded, LAU join(okres_lau_kod == {CZ-NUTS4},\n\tjoinType:'left',\n\tbroadcast: 'auto')~> JoinLAU\nJoinLAU, NUTS join(kraj_nuts_kod == {CZ-NUTS3},\n\tjoinType:'left',\n\tbroadcast: 'auto')~> JoinNUTS\nJoinNUTS select(mapColumn(\n\t\tid,\n\t\tdatum,\n\t\tkraj_nuts_kod,\n\t\tokres_lau_kod,\n\t\tprirustkovy_pocet_testu_okres,\n\t\tkumulativni_pocet_testu_okres,\n\t\tprirustkovy_pocet_testu_kraj,\n\t\tkumulativni_pocet_testu_kraj,\n\t\tprirustkovy_pocet_prvnich_testu_okres,\n\t\tkumulativni_pocet_prvnich_testu_okres,\n\t\tprirustkovy_pocet_prvnich_testu_kraj,\n\t\tkumulativni_pocet_prvnich_testu_kraj,\n\t\tkod_okresu,\n\t\tnazev_okresu,\n\t\t{CZ-NUTS4},\n\t\tnazev_kraje = LAU@nazev_kraje,\n\t\tnazev_kraje = NUTS@nazev_kraje,\n\t\t{CZ-NUTS3}\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nSelect1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Save"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Excel_LAU_CODES')]",
+				"[concat(variables('factoryId'), '/datasets/Excel_NUTS_CODES')]",
+				"[concat(variables('factoryId'), '/datasets/CovidStorage')]",
+				"[concat(variables('factoryId'), '/datasets/DatasetAfterFlow')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DatasetAfterFlow')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageCovidKraj",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"directory_name": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "@dataset().directory_name",
+						"container": "cumulative-tests"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageCovidKraj')]"
