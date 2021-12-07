@@ -5,6 +5,9 @@
 		"factoryName": {
 			"value": "CovidDataFactoryV2"
 		},
+		"AzureBlobStorageCovidKraj_connectionString": {
+			"value": ""
+		},
 		"CovidHTTP_properties_typeProperties_url": {
 			"value": "https://onemocneni-aktualne.mzcr.cz"
 		},

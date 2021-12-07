@@ -4,8 +4,12 @@
 	"parameters": {
 		"factoryName": {
 			"type": "string",
-			"metadata": "Název datové továrny",
+			"metadata": "Data Factory name",
 			"defaultValue": "CovidDataFactoryV2"
+		},
+		"AzureBlobStorageCovidKraj_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageCovidKraj'"
 		},
 		"CovidHTTP_properties_typeProperties_url": {
 			"type": "string",
@@ -13,11 +17,11 @@
 		},
 		"containerUri": {
 			"type": "string",
-			"metadata": "Identifikátor URI k účtu úložiště obsahujícímu propojené šablony ARM"
+			"metadata": "URI to storage account containing linked ARM templates"
 		},
 		"containerSasToken": {
 			"type": "string",
-			"metadata": "Token SAS pro účet úložiště, který obsahuje propojené šablony ARM"
+			"metadata": "Sas token to storage account containing linked ARM templates"
 		}
 	},
 	"variables": {
@@ -37,6 +41,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"AzureBlobStorageCovidKraj_connectionString": {
+						"value": "[parameters('AzureBlobStorageCovidKraj_connectionString')]"
 					},
 					"CovidHTTP_properties_typeProperties_url": {
 						"value": "[parameters('CovidHTTP_properties_typeProperties_url')]"
