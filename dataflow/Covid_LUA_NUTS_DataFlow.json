@@ -1,5 +1,5 @@
 {
-	"name": "dataflow1",
+	"name": "Covid_LUA_NUTS_DataFlow",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
