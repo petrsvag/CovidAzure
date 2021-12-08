@@ -111,7 +111,7 @@
 				}
 			},
 			{
-				"name": "Notebook1",
+				"name": "CovidNotebook",
 				"type": "DatabricksNotebook",
 				"dependsOn": [
 					{
