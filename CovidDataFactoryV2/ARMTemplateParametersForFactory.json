@@ -8,6 +8,9 @@
 		"AzureBlobStorageCovidKraj_connectionString": {
 			"value": ""
 		},
+		"CovidAzureDatabricks_accessToken": {
+			"value": ""
+		},
 		"CovidHTTP_properties_typeProperties_url": {
 			"value": "https://onemocneni-aktualne.mzcr.cz"
 		}

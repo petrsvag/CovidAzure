@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageCovidKraj'"
 		},
+		"CovidAzureDatabricks_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'CovidAzureDatabricks'"
+		},
 		"CovidHTTP_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://onemocneni-aktualne.mzcr.cz"
@@ -44,6 +48,9 @@
 					},
 					"AzureBlobStorageCovidKraj_connectionString": {
 						"value": "[parameters('AzureBlobStorageCovidKraj_connectionString')]"
+					},
+					"CovidAzureDatabricks_accessToken": {
+						"value": "[parameters('CovidAzureDatabricks_accessToken')]"
 					},
 					"CovidHTTP_properties_typeProperties_url": {
 						"value": "[parameters('CovidHTTP_properties_typeProperties_url')]"
