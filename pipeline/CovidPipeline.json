@@ -109,6 +109,38 @@
 					},
 					"traceLevel": "Fine"
 				}
+			},
+			{
+				"name": "Notebook1",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "CovidFLow",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/svagrpet@cvut.cz/Covid",
+					"baseParameters": {
+						"storage_account_name": "covidstoragev2",
+						"storage_account_access_key": "xSfLgrMAa+ViOjpsqPyY3XYh4E5dezTJIyjsMcrNG4xPRYyaV9KMrH+1bNE2VmibxT0bq4u668vR8pMgFA3iyA==",
+						"container_name": "@concat('covid_dataflow_',replace(pipeline().TriggerTime,':','-'))"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "CovidAzureDatabricks",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"annotations": []
